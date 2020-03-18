@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "..\IntersectProject\elements.h"
-#include "..\IntersectProject\main.cpp"
+#include "..\PairWork\elements.h"
+#include "..\PairWork\main.cpp"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace IntersectTest

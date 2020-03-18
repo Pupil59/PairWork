@@ -146,7 +146,7 @@ void solve() {
 			circleIntersectCircle(circles[i], circles[j]);
 		}
 	}
-	cout << points.size() << endl;
+	fout << points.size() << endl;
 }
 
 int main(int argc, char** argv) {
