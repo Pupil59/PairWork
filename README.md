@@ -1,8 +1,8 @@
-# 软件工程个人项目——交点问题
+# 软件工程结对项目——交点问题
 
-**任务要求：实现一个能求解简单几何形状之间交点的控制台程序**
+**任务要求：扩展的几何交点项目，支持异常处理和GUI界面**
 
-[**具体要求**](https://edu.cnblogs.com/campus/buaa/BUAA_SE_2020_LJ/homework/10429)
+[**具体要求**](https://edu.cnblogs.com/campus/buaa/BUAA_SE_2020_LJ/homework/10466)
 
 **src文件夹下为具体的代码实现**
 
