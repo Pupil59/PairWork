@@ -40,7 +40,6 @@ public://使用一般式表示直线，避免使用double出现精度损失。
 		this->c = c;
 	}
 	virtual bool isInLine(double x, double y) {
-		cout << "line judge" << endl;
 		return true;
 	}
 };
