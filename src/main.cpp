@@ -89,45 +89,69 @@ void circleIntersectCircle(Circle c1, Circle c2) {
 	}
 }
 
-void input(int argc, char** argv) {
-	for (int i = 0; i < argc; ++i) {
-		if (strcmp(argv[i], "-i") == 0) {
-			fin.open(argv[++i]);
-		}
-		if (strcmp(argv[i], "-o") == 0) {
-			fout.open(argv[++i]);
-		}
+void addLine(char type, long long x1, long long y1, long long x2, long long y2) {
+	if (type == 'L') {
+		Line *l = new Line(x1, y1, x2, y2);
+		lines.push_back(l);
 	}
+	if (type == 'R') {
+		RaysLine* r = new RaysLine(x1, y1, x2, y2);
+		lines.push_back(r);
+	}
+	if (type == 'S') {
+		SegmentLine* s = new SegmentLine(x1, y1, x2, y2);
+		lines.push_back(s);
+	}
+}
+
+void addCircle(long long x, long long y, long long r) {
+	Circle c(x, y, r);
+	circles.push_back(c);
+}
+
+void delLine(int index) {
+	vector<Line*>::iterator iter = lines.begin();
+	delete(lines.at(index));
+	lines.erase(iter + index);
+}
+
+void delCircle(int index) {
+	vector<Circle>::iterator iter = circles.begin();
+	circles.erase(iter + index);
+}
+
+void inputFile(char* path) {
+	fin.open(path);
 	int N;
 	fin >> N;
 	for (int i = 0; i < N; ++i) {
 		char type;
 		fin >> type;
-		if (type == 'L') {
-			long long x1, y1, x2, y2;
-			fin >> x1 >> y1 >> x2 >> y2;
-			Line* l = new Line(x1, y1, x2, y2);
-			lines.push_back(l);
-		}
+
 		if (type == 'C') {
 			long long x, y, r;
 			fin >> x >> y >> r;
-			Circle c(x, y, r);
-			circles.push_back(c);
+			addCircle(x, y, r);
 		}
-		if (type == 'R') {
+		else {
 			long long x1, y1, x2, y2;
 			fin >> x1 >> y1 >> x2 >> y2;
-			RaysLine* l = new RaysLine(x1, y1, x2, y2);
-			lines.push_back(l);
-		}
-		if (type == 'S') {
-			long long x1, y1, x2, y2;
-			fin >> x1 >> y1 >> x2 >> y2;
-			SegmentLine* l = new SegmentLine(x1, y1, x2, y2);
-			lines.push_back(l);
+			addLine(type, x1, y1, x2, y2);
 		}
 	}
+}
+
+void inputArg(int argc, char** argv) {
+	char* inputFilePath = NULL;
+	for (int i = 0; i < argc; ++i) {
+		if (strcmp(argv[i], "-i") == 0) {
+			inputFilePath = argv[++i];
+		}
+		if (strcmp(argv[i], "-o") == 0) {
+			fout.open(argv[++i]);
+		}
+	}
+	inputFile(inputFilePath);
 }
 
 void solve() {
@@ -146,10 +170,27 @@ void solve() {
 			circleIntersectCircle(circles[i], circles[j]);
 		}
 	}
-	fout << points.size() << endl;
 }
 
 int main(int argc, char** argv) {
-	input(argc, argv);
+	inputArg(argc, argv);
 	solve();
+	fout << points.size() << endl;
+}
+
+void draw() {
+	for (unsigned int i = 0; i < lines.size(); i++) {
+
+	}
+	for (unsigned int i = 0; i < circles.size(); i++) {
+
+	}
+}
+
+void drawPoint() {
+	set<Point>::iterator iter = points.begin();
+	while (iter != points.end()) {
+
+		iter++;
+	}
 }

@@ -194,9 +194,9 @@ namespace IntersectTest
 		}
 
 		TEST_METHOD(TestMethod16)
-		{//inputº¯Êý²âÊÔ
+		{//inputArgº¯Êý²âÊÔ
 			char* argv[5] = {"PairWork.exe", "-i", "in.txt", "-o", "out.txt" };
-			input(5, argv);
+			inputArg(5, argv);
 			Assert::AreEqual((int)lines.size(), 3);
 			Assert::AreEqual((int)circles.size(), 1);
 			lines.clear();
@@ -220,5 +220,43 @@ namespace IntersectTest
 			circles.clear();
 			points.clear();
 		}
+		TEST_METHOD(TestMethod18)
+		{//addLine
+			addLine('L',1, 2, 3, 4);
+			addLine('S', 2, 2, -1, -4);
+			addLine('R', 3, 4, 2, 3);
+			Assert::AreEqual((int)lines.size(), 3);
+			delLine(0);
+			Assert::AreEqual((int)lines.size(), 2);
+			delLine(0);
+			Assert::AreEqual((int)lines.size(), 1);
+			delLine(0);
+			Assert::AreEqual((int)lines.size(), 0);
+			lines.clear();
+		}
+		TEST_METHOD(TestMethod19)
+		{//addCircle
+			addCircle(0, 0, 1);
+			addCircle(5, 6, 7);
+			addCircle(4, 5, 6);
+			Assert::AreEqual((int)circles.size(), 3);
+			delCircle(0);
+			Assert::AreEqual((int)circles.size(), 2);
+			delCircle(0);
+			Assert::AreEqual((int)circles.size(), 1);
+			delCircle(0);
+			Assert::AreEqual((int)circles.size(), 0);
+			circles.clear();
+		}
+		TEST_METHOD(TestMethod20)
+		{//inputFile
+			char* path = "in.txt";
+			inputFile(path);
+			Assert::AreEqual((int)lines.size(), 3);
+			Assert::AreEqual((int)circles.size(), 1);
+			lines.clear();
+			circles.clear();
+		}
+		
 	};
 }
