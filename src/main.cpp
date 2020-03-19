@@ -90,56 +90,47 @@ void circleIntersectCircle(Circle c1, Circle c2) {
 }
 
 void addLine(string type, long long x1, long long y1, long long x2, long long y2) {
-	try {
-		if (!(x1 > -100000 && x1 < 100000 && y1 > -100000 && y1 < 100000
-			&& x2 > -100000 && x2 < 100000 && y2 > -100000 && y2 < 100000)) {
-			throw "parameter out of range, correct rang is (-100000, 100000)";
-		}
-		if (x1 == x2 && y1 == y2) {
-			throw "Two points coincide in a line definition,please input two different points";
-		}
-		for (unsigned int i = 0; i < lines.size(); i++) {
-			if ((lines.at(i))->isRepeat(type, x1, y1, x2, y2)) {
-				throw "two lines coincide";
-			}
-		}
-		if (type == "L") {
-			Line *l = new Line(x1, y1, x2, y2);
-			lines.push_back(l);
-		}
-		if (type == "R") {
-			RaysLine* r = new RaysLine(x1, y1, x2, y2);
-			lines.push_back(r);
-		}
-		if (type == "S") {
-			SegmentLine* s = new SegmentLine(x1, y1, x2, y2);
-			lines.push_back(s);
+	if (!(x1 > -100000 && x1 < 100000 && y1 > -100000 && y1 < 100000
+		&& x2 > -100000 && x2 < 100000 && y2 > -100000 && y2 < 100000)) {
+		throw "parameter out of range, correct range is (-100000, 100000)";
+	}
+	if (x1 == x2 && y1 == y2) {
+		throw "two points coincide in a line definition,please input two different points";
+	}
+	for (unsigned int i = 0; i < lines.size(); i++) {
+		if ((lines.at(i))->isRepeat(type, x1, y1, x2, y2)) {
+			throw "two lines coincide";
 		}
 	}
-	catch(const char* msg) {
-		cerr << msg << endl;
+	if (type == "L") {
+		Line *l = new Line(x1, y1, x2, y2);
+		lines.push_back(l);
 	}
-	
+	if (type == "R") {
+		RaysLine* r = new RaysLine(x1, y1, x2, y2);
+		lines.push_back(r);
+	}
+	if (type == "S") {
+		SegmentLine* s = new SegmentLine(x1, y1, x2, y2);
+		lines.push_back(s);
+	}	
 }
 
 void addCircle(long long x, long long y, long long r) {
-	try {
-		if (!(x > -100000 && x < 100000 && y > -100000 && y < 100000 && r > -100000 && r < 100000)) {
-			throw "parameter out of range, correct rang is (-100000, 100000)";
-		}
-		for (unsigned int i = 0; i < circles.size(); i++) {
-			Circle cir = circles.at(i);
-			if (cir.x == x && cir.y == y && cir.r == cir.r) {
-				throw "this circle exists";
-			}
-		}
-		Circle c(x, y, r);
-		circles.push_back(c);
+	if (!(x > -100000 && x < 100000 && y > -100000 && y < 100000 && r > -100000 && r < 100000)) {
+		throw "parameter out of range, correct range is (-100000, 100000)";
 	}
-	catch (const char* msg) {
-		cerr << msg << endl;
+	if (r <= 0) {
+		throw "radius of circle must be a positive integer";
 	}
-	
+	for (unsigned int i = 0; i < circles.size(); i++) {	
+		Circle cir = circles.at(i);
+		if (cir.x == x && cir.y == y && cir.r == cir.r) {
+			throw "this circle exists";
+		}
+	}
+	Circle c(x, y, r);
+	circles.push_back(c);
 }
 
 void delLine(int index) {
@@ -155,80 +146,64 @@ void delCircle(int index) {
 
 void inputFile(char* path) {
 	fin.open(path);
+	if (fin.fail()) {
+		throw "can not locate input file, please check the path of the file";
+	}
 	int N = -1;
-	try {
-		fin >> N;
-		if (N <= 0) {
-			throw "Incorrect Num at line 1, the Num must be a positive integer";
-		}
+
+	fin >> N;
+	if (N <= 0) {
+		throw "Incorrect Num at line 1, the Num must be a positive integer";
 	}
-	catch (const char* msg) {
-		cerr << msg << endl;
-		return;
-	}
-	
 	for (int i = 0; i < N; ++i) {
 		string type;
-		try {
-			fin >> type;
-			if (type != "L" && type != "S" && type != "R" && type != "C") {
-				throw "Incorrect type at line ";
-			}
-		}catch (const char* msg) {
-			cerr << msg << i + 2 << ", the type must be L, S, R, C"<< endl;
-			return;
+		fin >> type;
+		if (type != "L" && type != "S" && type != "R" && type != "C") {
+			throw "Incorrect type, correct types are L, S, R, C";
 		}
 		if (type == "C") {
 			long long x, y, r;
-			try {
-				fin >> x >> y >> r;
-				if (fin.fail()) {
-					throw "Incorrect parameter at line ";
-				}
-				addCircle(x, y, r);
+			fin >> x >> y >> r;
+			if (fin.fail()) {
+				throw "Incorrect parameter, please input integer and check the number of the circle parameters";
 			}
-			catch (const char* msg) {
-				cerr << msg << i + 2 << ", please input integer or check the number of the parameters" << endl;
-				return;
-			}
-			
+			addCircle(x, y, r);		
 		}
 		else {
 			long long x1, y1, x2, y2;
-			try {
-				fin >> x1 >> y1 >> x2 >> y2;
-				if (fin.fail()) {
-					throw "Incorrect parameter at line ";
-				}
-				addLine(type, x1, y1, x2, y2);
+			fin >> x1 >> y1 >> x2 >> y2;
+			if (fin.fail()) {
+				throw "Incorrect parameter, please input integer and check the number of the line parameters";
 			}
-			catch (const char* msg) {
-				cerr << msg << i + 2 << ", please input integer or check the number of the parameters" << endl;
-				return;
-			}		
+			addLine(type, x1, y1, x2, y2);		
 		}
 	}
 }
 
 void inputArg(int argc, char** argv) {
 	char* inputFilePath = NULL;
-	try {
+		bool flagI = false;
+		bool flagO = false;
 		for (int i = 0; i < argc; ++i) {
 			if (argv[i][0] == '-' && strcmp(argv[i], "-i") != 0 && strcmp(argv[i], "-o") != 0) {
-				throw "Incorrect command line parameters, please use '-i' for input, '-o' for output" ;
+				throw "Incorrect command line parameters, please use '-i' for input, '-o' for output";
 			}
 			if (strcmp(argv[i], "-i") == 0) {
 				inputFilePath = argv[++i];
+				flagI = true;
 			}
 			if (strcmp(argv[i], "-o") == 0) {
 				fout.open(argv[++i]);
+				flagO = true;
 			}
 		}
+		if (flagI == false) {
+			throw "'-i' is not found, please use '-i'";
+		}
+		if (flagO == false) {
+			throw "'-o' is not found, please use '-o'";
+		}
 		inputFile(inputFilePath);
-	}
-	catch (const char* msg) {
-		cerr << msg << endl;
-	}
 }
 
 void solve() {
@@ -250,9 +225,16 @@ void solve() {
 }
 
 int main(int argc, char** argv) {
-	inputArg(argc, argv);
-	solve();
+	try {
+		inputArg(argc, argv);
+		solve();
+	}
+	catch (const char* msg) {
+		cerr << msg << endl;
+	}
 	fout << points.size() << endl;
+	fin.close();
+	fout.close();
 }
 
 void draw() {

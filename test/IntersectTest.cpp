@@ -194,15 +194,17 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		//TEST_METHOD(TestMethod16)
-		//{//inputArg函数测试
-		//	char* argv[5] = { "Intersect.exe", "-i", "in.txt", "-o", "out.txt" };
-		//	inputArg(5, argv);
-		//	Assert::AreEqual((int)lines.size(), 3);
-		//	Assert::AreEqual((int)circles.size(), 1);
-		//	lines.clear();
-		//	circles.clear();
-		//}
+		TEST_METHOD(TestMethod16)
+		{//inputArg函数测试
+			char* argv[5] = { "Intersect.exe", "-i", "in.txt", "-o", "out.txt" };
+			inputArg(5, argv);
+			Assert::AreEqual((int)lines.size(), 3);
+			Assert::AreEqual((int)circles.size(), 1);
+			lines.clear();
+			circles.clear();
+			fin.close();
+			fout.close();
+		}
 		TEST_METHOD(TestMethod17)
 		{//solve函数测试
 			Line* l = new Line(-1, 4, 4, -1);
@@ -258,6 +260,306 @@ namespace IntersectTest
 			lines.clear();
 			circles.clear();
 		}
+		TEST_METHOD(TestMethod21)
+		{
+			try {
+				char* argv[5] = { "Intersect.exe", "-v", "in.txt", "-o", "out.txt" };
+				inputArg(5, argv);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "Incorrect command line parameters, please use '-i' for input, '-o' for output");
+			}
+			try {
+				char* argv[5] = { "Intersect.exe", "iii", "in.txt", "-o", "out.txt" };
+				inputArg(5, argv);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "'-i' is not found, please use '-i'");
+			}
+			try {
+				char* argv[5] = { "Intersect.exe", "-i", "in.txt", "oooo", "out.txt" };
+				inputArg(5, argv);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "'-o' is not found, please use '-o'");
+			}
+			fin.close();
+		}
+		//"Incorrect command line parameters, please use '-i' for input, '-o' for output"
+		//"'-i' is not found, please use '-i'"
+		//"'-o' is not found, please use '-o'"
+		
+		TEST_METHOD(TestMethod22)
+		{
+			try {
+				char* path = "int.txt";
+				inputFile(path);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "can not locate input file, please check the path of the file");
+				fin.close();
+			}
+			try {
+				char* path = "C:\\Users\\LY59\\Desktop\\Intersect\\IntersectTest\\test case\\case1.txt";
+				inputFile(path);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "Incorrect Num at line 1, the Num must be a positive integer");
+				fin.close();
+			}
+			try {
+				char* path = "C:\\Users\\LY59\\Desktop\\Intersect\\IntersectTest\\test case\\case2.txt";
+				inputFile(path);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "Incorrect type, correct types are L, S, R, C");
+				fin.close();
+			}
+			try {
+				char* path = "C:\\Users\\LY59\\Desktop\\Intersect\\IntersectTest\\test case\\case3.txt";
+				inputFile(path);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "Incorrect parameter, please input integer and check the number of the circle parameters");
+				fin.close();
+			}
+			try {
+				char* path = "C:\\Users\\LY59\\Desktop\\Intersect\\IntersectTest\\test case\\case4.txt";
+				inputFile(path);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "Incorrect parameter, please input integer and check the number of the line parameters");
+				fin.close();
+			}
+		}
+		//"can not locate input file, please check the path of the file"
+		//"Incorrect Num at line 1, the Num must be a positive integer"
+		//"Incorrect type, correct types are L, S, R, C"
+		//"Incorrect parameter, please input integer and check the number of the circle parameters"
+		//"Incorrect parameter, please input integer and check the number of the line parameters"
 
+		TEST_METHOD(TestMethod23)
+		{
+			try {
+				addLine("R", 1, 2, 3, 100000);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "parameter out of range, correct range is (-100000, 100000)");
+			}
+			
+			try {
+				addLine("R", 1, 1, 1, 1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two points coincide in a line definition,please input two different points");
+			}
+		}
+		//parameter out of range, correct range is (-100000, 100000)
+		//"two points coincide in a line definition,please input two different points"
+
+		TEST_METHOD(TestMethod24) 
+		{
+			//直线和直线重合
+			try {
+				addLine("L", 1, 1, 2, 2);
+				addLine("L", 3, 3, 4, 4);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			//射线与直线重合
+			try {
+				addLine("R", 1, 1, 2, 2);
+				addLine("L", 3, 3, 4, 4);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			//射线与射线重合
+			try {
+				addLine("R", 1, 1, 2, 2);
+				addLine("R", 3, 3, 4, 4);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 0, 1, 1);
+				addLine("R", 1, 1, -1, -1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 0, -1, -1);
+				addLine("R", -1, -1, 1, 1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 1, 0, 2);
+				addLine("R", 0, 3, 0, 0);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 1, 0, -1);
+				addLine("R", 0, 0, 0, 2);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			//射线与线段重合
+			try {
+				addLine("R", 0, 0, 1, 1);
+				addLine("S", 1, 1, -1, -1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 0, -1, -1);
+				addLine("S", -1, -1, 1, 1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 1, 0, 2);
+				addLine("S", 0, 3, 0, 0);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("R", 0, 1, 0, -1);
+				addLine("S", 0, 0, 0, 2);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			//线段与直线重合
+			try {
+				addLine("S", 0, 1, 0, -1);
+				addLine("L", 0, 0, 0, 2);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			//线段与射线重合
+			try {
+				addLine("S", 1, 1, -1, -1);
+				addLine("R", 0, 0, 1, 1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", -1, -1, 1, 1);
+				addLine("R", 0, 0, -1, -1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", 0, 3, 0, 0);
+				addLine("R", 0, 1, 0, 2);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", 0, 0, 0, 2);
+				addLine("R", 0, 1, 0, -1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			//线段与线段重合
+			try {
+				addLine("S", 1, 1, 2, 2);
+				addLine("S", 3, 3, 4, 4);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", 0, 0, 1, 1);
+				addLine("S", 1, 1, -1, -1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", 0, 0, -1, -1);
+				addLine("S", -1, -1, 1, 1);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", 0, 1, 0, 2);
+				addLine("S", 0, 3, 0, 0);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+			try {
+				addLine("S", 0, 1, 0, -1);
+				addLine("S", 0, 0, 0, 2);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "two lines coincide");
+				lines.clear();
+			}
+		}
+		//"two lines coincide"
+
+		TEST_METHOD(TestMethod25)
+		{
+			try {
+				addCircle(100000, 100000, -100000);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "parameter out of range, correct range is (-100000, 100000)");
+			}
+			try {
+				addCircle(1, 2, -3);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "radius of circle must be a positive integer");
+			}
+			try {
+				addCircle(1, 2, 3);
+				addCircle(1, 2, 3);
+			}
+			catch (char* msg) {
+				Assert::AreEqual(msg, "this circle exists");
+			}
+		}
+		//"radius of circle must be a positive integer"
+		//"this circle exists"
 	};
 }

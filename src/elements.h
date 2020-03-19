@@ -36,26 +36,7 @@ public:
 	long long startY;
 	long long endX;
 	long long endY;
-	SegmentLine(long long x1, long long y1, long long x2, long long y2) : Line(x1, y1, x2, y2) {
-		if (x1 < x2) {
-			this->startX = x1;
-			this->startY = y1;
-			this->endX = x2;
-			this->endY = y2;
-		}
-		else {
-			this->startX = x2;
-			this->endX = x1;
-			if (y1 < y2) {
-				this->startY = y1;
-				this->endY = y2;
-			}
-			else {
-				this->startY = y2;
-				this->endY = y1;
-			}
-		}
-	}
+	SegmentLine(long long x1, long long y1, long long x2, long long y2);
 	bool isInLine(double x, double y);
 	bool isRepeat(string type, long long x1, long long y1, long long x2, long long y2);
 };
@@ -66,16 +47,7 @@ public:
 	long long startY;
 	int direct;
 	//1代表x轴正方向，2代表x轴负方向，3代表y轴正方向， 4代表y轴负方向
-	RaysLine(long long x1, long long y1, long long x2, long long y2) : Line(x1, y1, x2, y2) {
-		this->startX = x1;
-		this->startY = y1;
-		if (x1 == x2) {
-			this->direct = (y1 < y2) ? 3 : 4;
-		}
-		else {
-			this->direct = (x1 < x2) ? 1 : 2;
-		}
-	}
+	RaysLine(long long x1, long long y1, long long x2, long long y2);
 	bool isInLine(double x, double y);
 	bool isRepeat(string type, long long x1, long long y1, long long x2, long long y2);
 };
