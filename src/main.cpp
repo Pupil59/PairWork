@@ -89,24 +89,57 @@ void circleIntersectCircle(Circle c1, Circle c2) {
 	}
 }
 
-void addLine(char type, long long x1, long long y1, long long x2, long long y2) {
-	if (type == 'L') {
-		Line *l = new Line(x1, y1, x2, y2);
-		lines.push_back(l);
+void addLine(string type, long long x1, long long y1, long long x2, long long y2) {
+	try {
+		if (!(x1 > -100000 && x1 < 100000 && y1 > -100000 && y1 < 100000
+			&& x2 > -100000 && x2 < 100000 && y2 > -100000 && y2 < 100000)) {
+			throw "parameter out of range, correct rang is (-100000, 100000)";
+		}
+		if (x1 == x2 && y1 == y2) {
+			throw "Two points coincide in a line definition,please input two different points";
+		}
+		for (unsigned int i = 0; i < lines.size(); i++) {
+			if ((lines.at(i))->isRepeat(type, x1, y1, x2, y2)) {
+				throw "two lines coincide";
+			}
+		}
+		if (type == "L") {
+			Line *l = new Line(x1, y1, x2, y2);
+			lines.push_back(l);
+		}
+		if (type == "R") {
+			RaysLine* r = new RaysLine(x1, y1, x2, y2);
+			lines.push_back(r);
+		}
+		if (type == "S") {
+			SegmentLine* s = new SegmentLine(x1, y1, x2, y2);
+			lines.push_back(s);
+		}
 	}
-	if (type == 'R') {
-		RaysLine* r = new RaysLine(x1, y1, x2, y2);
-		lines.push_back(r);
+	catch(const char* msg) {
+		cerr << msg << endl;
 	}
-	if (type == 'S') {
-		SegmentLine* s = new SegmentLine(x1, y1, x2, y2);
-		lines.push_back(s);
-	}
+	
 }
 
 void addCircle(long long x, long long y, long long r) {
-	Circle c(x, y, r);
-	circles.push_back(c);
+	try {
+		if (!(x > -100000 && x < 100000 && y > -100000 && y < 100000 && r > -100000 && r < 100000)) {
+			throw "parameter out of range, correct rang is (-100000, 100000)";
+		}
+		for (unsigned int i = 0; i < circles.size(); i++) {
+			Circle cir = circles.at(i);
+			if (cir.x == x && cir.y == y && cir.r == cir.r) {
+				throw "this circle exists";
+			}
+		}
+		Circle c(x, y, r);
+		circles.push_back(c);
+	}
+	catch (const char* msg) {
+		cerr << msg << endl;
+	}
+	
 }
 
 void delLine(int index) {
@@ -122,36 +155,80 @@ void delCircle(int index) {
 
 void inputFile(char* path) {
 	fin.open(path);
-	int N;
-	fin >> N;
+	int N = -1;
+	try {
+		fin >> N;
+		if (N <= 0) {
+			throw "Incorrect Num at line 1, the Num must be a positive integer";
+		}
+	}
+	catch (const char* msg) {
+		cerr << msg << endl;
+		return;
+	}
+	
 	for (int i = 0; i < N; ++i) {
-		char type;
-		fin >> type;
-
-		if (type == 'C') {
+		string type;
+		try {
+			fin >> type;
+			if (type != "L" && type != "S" && type != "R" && type != "C") {
+				throw "Incorrect type at line ";
+			}
+		}catch (const char* msg) {
+			cerr << msg << i + 2 << ", the type must be L, S, R, C"<< endl;
+			return;
+		}
+		if (type == "C") {
 			long long x, y, r;
-			fin >> x >> y >> r;
-			addCircle(x, y, r);
+			try {
+				fin >> x >> y >> r;
+				if (fin.fail()) {
+					throw "Incorrect parameter at line ";
+				}
+				addCircle(x, y, r);
+			}
+			catch (const char* msg) {
+				cerr << msg << i + 2 << ", please input integer or check the number of the parameters" << endl;
+				return;
+			}
+			
 		}
 		else {
 			long long x1, y1, x2, y2;
-			fin >> x1 >> y1 >> x2 >> y2;
-			addLine(type, x1, y1, x2, y2);
+			try {
+				fin >> x1 >> y1 >> x2 >> y2;
+				if (fin.fail()) {
+					throw "Incorrect parameter at line ";
+				}
+				addLine(type, x1, y1, x2, y2);
+			}
+			catch (const char* msg) {
+				cerr << msg << i + 2 << ", please input integer or check the number of the parameters" << endl;
+				return;
+			}		
 		}
 	}
 }
 
 void inputArg(int argc, char** argv) {
 	char* inputFilePath = NULL;
-	for (int i = 0; i < argc; ++i) {
-		if (strcmp(argv[i], "-i") == 0) {
-			inputFilePath = argv[++i];
+	try {
+		for (int i = 0; i < argc; ++i) {
+			if (argv[i][0] == '-' && strcmp(argv[i], "-i") != 0 && strcmp(argv[i], "-o") != 0) {
+				throw "Incorrect command line parameters, please use '-i' for input, '-o' for output" ;
+			}
+			if (strcmp(argv[i], "-i") == 0) {
+				inputFilePath = argv[++i];
+			}
+			if (strcmp(argv[i], "-o") == 0) {
+				fout.open(argv[++i]);
+			}
 		}
-		if (strcmp(argv[i], "-o") == 0) {
-			fout.open(argv[++i]);
-		}
+		inputFile(inputFilePath);
 	}
-	inputFile(inputFilePath);
+	catch (const char* msg) {
+		cerr << msg << endl;
+	}
 }
 
 void solve() {

@@ -7,21 +7,8 @@ public:
 	double x;
 	double y;
 
-	Point(double x, double y) {
-		this->x = x;
-		this->y = y;
-	}
-	bool operator<(const Point& p) const {//使用自定义类型的set需要重载<运算符
-		if (x < p.x && p.x - x > 1e-8) {
-			return true;
-		}
-		else {
-			if (fabs(x - p.x) <= 1e-8 && y < p.y && p.y - y > 1e-8) { //采用1e-8的精度判断相等
-				return true;
-			}
-		}
-		return false;
-	}
+	Point(double x, double y);
+	bool operator<(const Point& p) const;
 };
 class Line {
 public://使用一般式表示直线，避免使用double出现精度损失。
@@ -29,19 +16,10 @@ public://使用一般式表示直线，避免使用double出现精度损失。
 	long long b;
 	long long c;
 
-	Line(long long x1, long long y1, long long x2, long long y2) {
-		this->a = y2 - y1;
-		this->b = x1 - x2;
-		this->c = x2 * y1 - x1 * y2;
-	}
-	Line(long long a, long long b, long long c) {
-		this->a = a;
-		this->b = b;
-		this->c = c;
-	}
-	virtual bool isInLine(double x, double y) {
-		return true;
-	}
+	Line(long long x1, long long y1, long long x2, long long y2);
+	Line(long long a, long long b, long long c);
+	virtual bool isInLine(double x, double y);
+	virtual bool isRepeat(string type, long long x1, long long y1, long long x2, long long y2);
 };
 class Circle {
 public:
@@ -49,11 +27,7 @@ public:
 	long long y;
 	long long r;
 
-	Circle(long long x, long long y, long long r) {
-		this->x = x;
-		this->y = y;
-		this->r = r;
-	}
+	Circle(long long x, long long y, long long r);
 };
 
 class SegmentLine : public Line {
@@ -82,19 +56,8 @@ public:
 			}
 		}
 	}
-	bool isInLine(double x, double y) {
-		if (startX ==  endX) {
-			if ((y < startY && (startY - y) > 1e-8) || (y > endY && (y - endY) > 1e-8)) {
-				return false;
-			}
-		}
-		else {
-			if ((x < startX && (startX - x) > 1e-8) || (x > endX && (x - endX) > 1e-8)) {
-				return false;
-			}
-		}
-		return true;
-	}
+	bool isInLine(double x, double y);
+	bool isRepeat(string type, long long x1, long long y1, long long x2, long long y2);
 };
 
 class RaysLine : public Line {
@@ -113,30 +76,6 @@ public:
 			this->direct = (x1 < x2) ? 1 : 2;
 		}
 	}
-	bool isInLine(double x, double y) {
-		switch (this->direct)
-		{
-		case 1:
-			if (x < startX && (startX - x) > 1e-8) {
-				return false;
-			}
-			break;
-		case 2:
-			if (x > startX && (x - startX) > 1e-8) {
-				return false;
-			}
-			break;
-		case 3:
-			if (y < startY && (startY - y) > 1e-8) {
-				return false;
-			}
-			break;
-		case 4:
-			if (y > startY && (y - startY) > 1e-8) {
-				return false;
-			}
-			break;
-		}
-		return true;
-	}
+	bool isInLine(double x, double y);
+	bool isRepeat(string type, long long x1, long long y1, long long x2, long long y2);
 };

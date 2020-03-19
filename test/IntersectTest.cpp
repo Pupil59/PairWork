@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "..\PairWork\elements.h"
-#include "..\PairWork\main.cpp"
+#include "..\Intersect\elements.h"
+#include "..\Intersect\main.cpp"
+#include "..\Intersect\elements.cpp"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace IntersectTest
@@ -10,7 +11,7 @@ namespace IntersectTest
 	{
 	public:
 
-		TEST_METHOD(TestMethod1)
+		TEST_METHOD(TestMethod01)
 		{//验证设定精度下的去重功能
 			Point p1(1.0000000001, 0.999999999);
 			Point p2(1.0000000000, 1.000000000);
@@ -22,7 +23,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod2)
+		TEST_METHOD(TestMethod02)
 		{ //直线平行
 			Line l1(1, 2, 2, 4);
 			Line l2(1, 3, 2, 5);
@@ -31,7 +32,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod3)
+		TEST_METHOD(TestMethod03)
 		{ //直线相交
 			Line l1(1, 2, 2, 4);
 			Line l2(3, 0, 0, 6);
@@ -42,7 +43,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod4)
+		TEST_METHOD(TestMethod04)
 		{ //直线与圆相离
 			Line l(1, 2, 2, 4);
 			Circle c(1, -1, 1);
@@ -51,7 +52,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod5)
+		TEST_METHOD(TestMethod05)
 		{ //直线与圆相切
 			Line l(1, -4, 5, -7);
 			Circle c(-6, -5, 5);
@@ -62,7 +63,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod6)
+		TEST_METHOD(TestMethod06)
 		{ //直线与圆相交
 			Line l(3, 4, 5, 2);
 			Circle c(2, 3, 2);
@@ -77,7 +78,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod7)
+		TEST_METHOD(TestMethod07)
 		{ //圆与圆内离
 			Circle c1(2, 3, 3);
 			Circle c2(3, 2, 1);
@@ -86,7 +87,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod8)
+		TEST_METHOD(TestMethod08)
 		{ //圆与圆外离
 			Circle c1(0, 6, 3);
 			Circle c2(3, 2, 1);
@@ -95,7 +96,7 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod9)
+		TEST_METHOD(TestMethod09)
 		{ //圆与圆内切
 			Circle c1(2, 2, 2);
 			Circle c2(3, 2, 1);
@@ -148,7 +149,7 @@ namespace IntersectTest
 			Assert::AreEqual((int)points.size(), 0);
 			points.clear();
 		}
-		TEST_METHOD(TestMethod13) 
+		TEST_METHOD(TestMethod13)
 		{//线段与直线不相交
 			Line l1(0, 1, 1, 0);
 			SegmentLine s1(1, 1, 2, 2);
@@ -193,15 +194,15 @@ namespace IntersectTest
 			points.clear();
 		}
 
-		TEST_METHOD(TestMethod16)
-		{//inputArg函数测试
-			char* argv[5] = {"PairWork.exe", "-i", "in.txt", "-o", "out.txt" };
-			inputArg(5, argv);
-			Assert::AreEqual((int)lines.size(), 3);
-			Assert::AreEqual((int)circles.size(), 1);
-			lines.clear();
-			circles.clear();
-		}
+		//TEST_METHOD(TestMethod16)
+		//{//inputArg函数测试
+		//	char* argv[5] = { "Intersect.exe", "-i", "in.txt", "-o", "out.txt" };
+		//	inputArg(5, argv);
+		//	Assert::AreEqual((int)lines.size(), 3);
+		//	Assert::AreEqual((int)circles.size(), 1);
+		//	lines.clear();
+		//	circles.clear();
+		//}
 		TEST_METHOD(TestMethod17)
 		{//solve函数测试
 			Line* l = new Line(-1, 4, 4, -1);
@@ -222,9 +223,9 @@ namespace IntersectTest
 		}
 		TEST_METHOD(TestMethod18)
 		{//addLine
-			addLine('L',1, 2, 3, 4);
-			addLine('S', 2, 2, -1, -4);
-			addLine('R', 3, 4, 2, 3);
+			addLine("L", 1, 2, 3, 4);
+			addLine("S", 2, 2, -1, -4);
+			addLine("R", 3, 4, 2, 7);
 			Assert::AreEqual((int)lines.size(), 3);
 			delLine(0);
 			Assert::AreEqual((int)lines.size(), 2);
@@ -250,13 +251,13 @@ namespace IntersectTest
 		}
 		TEST_METHOD(TestMethod20)
 		{//inputFile
-			char* path = "in.txt";
+			char* path = "C:\\Users\\LY59\\Desktop\\Intersect\\IntersectTest\\in.txt";
 			inputFile(path);
 			Assert::AreEqual((int)lines.size(), 3);
 			Assert::AreEqual((int)circles.size(), 1);
 			lines.clear();
 			circles.clear();
 		}
-		
+
 	};
 }
