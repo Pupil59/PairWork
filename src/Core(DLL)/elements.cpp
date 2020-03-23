@@ -1,24 +1,25 @@
-#pragma once
+#include"pch.h"
 #include<cmath>
 #include<iostream>
+#include<graphics.h>
 #include"elements.h"
 using namespace std;
 
 Point::Point(double x, double y) {
-		this->x = x;
-		this->y = y;
+	this->x = x;
+	this->y = y;
 }
 bool Point::operator<(const Point& p) const {//使用自定义类型的set需要重载<运算符
-		if (x < p.x && p.x - x > 1e-8) {
+	if (x < p.x && p.x - x > 1e-8) {
+		return true;
+	}
+	else {
+		if (fabs(x - p.x) <= 1e-8 && y < p.y && p.y - y > 1e-8) { //采用1e-8的精度判断相等
 			return true;
 		}
-		else {
-			if (fabs(x - p.x) <= 1e-8 && y < p.y && p.y - y > 1e-8) { //采用1e-8的精度判断相等
-				return true;
-			}
-		}
-		return false;
 	}
+	return false;
+}
 
 Circle::Circle(long long x, long long y, long long r) {
 	this->x = x;
@@ -52,12 +53,12 @@ Line::Line(long long x1, long long y1, long long x2, long long y2) {
 		m = gcd(m, abs(c));
 	}
 	this->a = a / m;
-	this->b = b / m;	
+	this->b = b / m;
 	this->c = c / m;
 	if (a < 0) {
-		this->a = -a ;
-		this->b = -b ;
-		this->c = -c ;
+		this->a = -a;
+		this->b = -b;
+		this->c = -c;
 	}
 }
 Line::Line(long long a, long long b, long long c) {
@@ -75,6 +76,36 @@ bool Line::isRepeat(string type, long long x1, long long y1, long long x2, long 
 	}
 	return false;
 }
+void Line::draw() {
+	if (b == 0) {
+		line(Xaxis + (-c / a) * PerUnit, 0, Xaxis + (-c / a) * PerUnit, Height);
+	}
+	else {
+		long long x1 = -Length / (2 * PerUnit);
+		long long x2 = Length / (2 * PerUnit);
+		long long y1 = ((-c - a * x1) * PerUnit) / b;
+		long long y2 = ((-c - a * x2) * PerUnit) / b;
+		line(0, Yaxis - y1, Length, Yaxis - y2);
+	}
+}
+void Line::show() {
+	if (a != 0) {
+		cout << a << "x";
+	}
+	if (b > 0) {
+		cout << "+" << b << "y";
+	}
+	if (b < 0) {
+		cout << b << "y";
+	}
+	if (c > 0) {
+		cout << "+" << c << "=0";
+	}
+	if (c < 0) {
+		cout << c << "=0";
+	}
+	cout << "(Line)" << endl;
+}
 
 SegmentLine::SegmentLine(long long x1, long long y1, long long x2, long long y2) : Line(x1, y1, x2, y2) {
 	if (x1 < x2) {
@@ -84,13 +115,15 @@ SegmentLine::SegmentLine(long long x1, long long y1, long long x2, long long y2)
 		this->endY = y2;
 	}
 	else {
-		this->startX = x2;
-		this->endX = x1;
 		if (y1 < y2) {
+			this->startX = x1;
+			this->endX = x2;
 			this->startY = y1;
 			this->endY = y2;
 		}
 		else {
+			this->startX = x2;
+			this->endX = x1;
 			this->startY = y2;
 			this->endY = y1;
 		}
@@ -142,6 +175,29 @@ bool SegmentLine::isRepeat(string type, long long x1, long long y1, long long x2
 		}
 	}
 	return false;
+}
+void SegmentLine::draw() {
+	line(Xaxis + startX * PerUnit, Yaxis - startY * PerUnit, Xaxis + endX * PerUnit, Yaxis - endY * PerUnit);
+}
+void SegmentLine::show() {
+	if (a != 0) {
+		cout << a << "x";
+	}
+	if (b > 0) {
+		cout << "+" << b << "y";
+	}
+	if (b < 0) {
+		cout << b << "y";
+	}
+	if (c > 0) {
+		cout << "+" << c << "=0";
+	}
+	if (c < 0) {
+		cout << c << "=0";
+	}
+	cout << "(SegmentLine) ";
+	cout << "start:(" << startX << "," << startY << ") ";
+	cout << "end:(" << endX << "," << endY << ") " << endl;
 }
 
 //1代表x轴正方向，2代表x轴负方向，3代表y轴正方向， 4代表y轴负方向
@@ -220,4 +276,63 @@ bool RaysLine::isRepeat(string type, long long x1, long long y1, long long x2, l
 		}
 	}
 	return false;
+}
+void RaysLine::draw() {
+	long long x1, x2, y1, y2;
+	switch (direct)
+	{
+	case 1:
+		x1 = -Length / (2 * PerUnit);
+		x2 = Length / (2 * PerUnit);
+		y1 = ((-c - a * x1) * PerUnit) / b;
+		y2 = ((-c - a * x2) * PerUnit) / b;
+		line(Xaxis + startX * PerUnit, Yaxis - startY * PerUnit, Length, Yaxis - y2);
+		break;
+	case 2:
+		x1 = -Length / (2 * PerUnit);
+		x2 = Length / (2 * PerUnit);
+		y1 = ((-c - a * x1) * PerUnit) / b;
+		y2 = ((-c - a * x2) * PerUnit) / b;
+		line(Xaxis + startX * PerUnit, Yaxis - startY * PerUnit, 0, Yaxis - y1);
+		break;
+	case 3:
+		line(Xaxis + startX * PerUnit, Yaxis - startY * PerUnit, Xaxis + startX * PerUnit, 0);
+		break;
+	case 4:
+		line(Xaxis + startX * PerUnit, Yaxis - startY * PerUnit, Xaxis + startX * PerUnit, Height);
+		break;
+	}
+}
+void RaysLine::show() {
+	if (a != 0) {
+		cout << a << "x";
+	}
+	if (b > 0) {
+		cout << "+" << b << "y";
+	}
+	if (b < 0) {
+		cout << b << "y";
+	}
+	if (c > 0) {
+		cout << "+" << c << "=0";
+	}
+	if (c < 0) {
+		cout << c << "=0";
+	}
+	cout << "(RaysLine) ";
+	cout << "start:(" << startX << "," << startY << ") ";
+	switch (direct) {
+		case 1:
+			cout << "direct: Xaxis positive" << endl;
+			break;
+		case 2:
+			cout << "direct: Xaxis negative" << endl;
+			break;
+		case 3:
+			cout << "direct: Yaxis positive" << endl;
+			break;
+		case 4:
+			cout << "direct: Yaxis negative" << endl;
+			break;
+	}
 }

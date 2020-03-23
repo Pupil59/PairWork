@@ -1,16 +1,20 @@
-#include<iostream>
-#include<fstream>
-#include<set>
-#include<vector>
+#include "pch.h"
+#include "core.h"
 #include "elements.h"
+#include <iostream>
+#include <fstream>
+#include <set>
+#include <vector>
+#include <graphics.h>
+
 using namespace std;
 ifstream fin;
 ofstream fout;
-vector<Line *> lines;
+vector<Line*> lines;
 vector<Circle> circles;
 set<Point> points;
 
-void lineIntersectLine(Line &l1, Line &l2) {
+void lineIntersectLine(Line& l1, Line& l2) {
 	if (l1.b * l2.a != l1.a * l2.b) { //不平行才会相交
 		double x = (double)(l2.c * l1.b - l1.c * l2.b) / (double)(l1.a * l2.b - l1.b * l2.a);
 		double y = (double)(l2.c * l1.a - l1.c * l2.a) / (double)(l1.b * l2.a - l1.a * l2.b);
@@ -21,7 +25,7 @@ void lineIntersectLine(Line &l1, Line &l2) {
 	}
 }
 
-void lineIntersectCircle(Line &l, Circle cir) { 
+void lineIntersectCircle(Line& l, Circle cir) {
 	if (l.a == 0) { //水平线
 		double y = -(double)l.c / (double)l.b; //将y值代入圆方程
 		long long a = l.b * l.b;
@@ -45,7 +49,7 @@ void lineIntersectCircle(Line &l, Circle cir) {
 			if (l.isInLine(x, y)) {
 				Point p(x, y);
 				points.insert(p);
-			}	
+			}
 		}
 	}
 	else {//直线Ax+By+C=0中A不为零，可以将x用y表示代入圆方程。
@@ -73,7 +77,7 @@ void lineIntersectCircle(Line &l, Circle cir) {
 			if (l.isInLine(x, y)) {
 				Point p(x, y);
 				points.insert(p);
-			}	
+			}
 		}
 	}
 }
@@ -89,21 +93,63 @@ void circleIntersectCircle(Circle c1, Circle c2) {
 	}
 }
 
+void inputFile(char* path) {
+	fin.open(path);
+	if (fin.fail()) {
+		throw "can not locate input file, please check the path of the file";
+	}
+	int N = -1;
+
+	fin >> N;
+	if (N <= 0) {
+		fin.close();
+		throw "Incorrect Num at line 1, the Num must be a positive integer";
+	}
+	for (int i = 0; i < N; ++i) {
+		string type;
+		fin >> type;
+		if (type != "L" && type != "S" && type != "R" && type != "C") {
+			fin.close();
+			throw "Incorrect type, correct types are L, S, R, C";
+		}
+		if (type == "C") {
+			long long x, y, r;
+			fin >> x >> y >> r;
+			if (fin.fail()) {
+				fin.close();
+				throw "Incorrect circle parameter, please input integer and check the number of parameters";
+			}
+			addCircle(x, y, r);
+		}
+		else {
+			long long x1, y1, x2, y2;
+			fin >> x1 >> y1 >> x2 >> y2;
+			if (fin.fail()) {
+				fin.close();
+				throw "Incorrect line parameter, please input integer and check the number of parameters";
+			}
+			addLine(type, x1, y1, x2, y2);
+		}
+	}
+	fin.close();
+}
+
 void addLine(string type, long long x1, long long y1, long long x2, long long y2) {
 	if (!(x1 > -100000 && x1 < 100000 && y1 > -100000 && y1 < 100000
 		&& x2 > -100000 && x2 < 100000 && y2 > -100000 && y2 < 100000)) {
 		throw "parameter out of range, correct range is (-100000, 100000)";
 	}
 	if (x1 == x2 && y1 == y2) {
-		throw "two points coincide in a line definition,please input two different points";
+		throw "two points coincide in a line definition, please input two different points";
 	}
+
 	for (unsigned int i = 0; i < lines.size(); i++) {
 		if ((lines.at(i))->isRepeat(type, x1, y1, x2, y2)) {
 			throw "two lines coincide";
 		}
 	}
 	if (type == "L") {
-		Line *l = new Line(x1, y1, x2, y2);
+		Line* l = new Line(x1, y1, x2, y2);
 		lines.push_back(l);
 	}
 	if (type == "R") {
@@ -113,7 +159,7 @@ void addLine(string type, long long x1, long long y1, long long x2, long long y2
 	if (type == "S") {
 		SegmentLine* s = new SegmentLine(x1, y1, x2, y2);
 		lines.push_back(s);
-	}	
+	}
 }
 
 void addCircle(long long x, long long y, long long r) {
@@ -123,7 +169,7 @@ void addCircle(long long x, long long y, long long r) {
 	if (r <= 0) {
 		throw "radius of circle must be a positive integer";
 	}
-	for (unsigned int i = 0; i < circles.size(); i++) {	
+	for (unsigned int i = 0; i < circles.size(); i++) {
 		Circle cir = circles.at(i);
 		if (cir.x == x && cir.y == y && cir.r == cir.r) {
 			throw "this circle exists";
@@ -134,79 +180,45 @@ void addCircle(long long x, long long y, long long r) {
 }
 
 void delLine(int index) {
+	if (index < 0 || index >= lines.size()) {
+		throw "Index out of range";
+	}
 	vector<Line*>::iterator iter = lines.begin();
 	delete(lines.at(index));
 	lines.erase(iter + index);
 }
 
 void delCircle(int index) {
+	if (index < 0 || index >= circles.size()) {
+		throw "Index out of range";
+	}
 	vector<Circle>::iterator iter = circles.begin();
 	circles.erase(iter + index);
 }
 
-void inputFile(char* path) {
-	fin.open(path);
-	if (fin.fail()) {
-		throw "can not locate input file, please check the path of the file";
+void showLine() {
+	FILE* fp = NULL;
+	AllocConsole();
+	freopen_s(&fp, "CONOUT$", "w", stdout);
+	for (unsigned int i = 0; i < lines.size(); ++i) {
+		cout << "Line " << i << ":";
+		lines[i]->show();
 	}
-	int N = -1;
-
-	fin >> N;
-	if (N <= 0) {
-		throw "Incorrect Num at line 1, the Num must be a positive integer";
-	}
-	for (int i = 0; i < N; ++i) {
-		string type;
-		fin >> type;
-		if (type != "L" && type != "S" && type != "R" && type != "C") {
-			throw "Incorrect type, correct types are L, S, R, C";
-		}
-		if (type == "C") {
-			long long x, y, r;
-			fin >> x >> y >> r;
-			if (fin.fail()) {
-				throw "Incorrect parameter, please input integer and check the number of the circle parameters";
-			}
-			addCircle(x, y, r);		
-		}
-		else {
-			long long x1, y1, x2, y2;
-			fin >> x1 >> y1 >> x2 >> y2;
-			if (fin.fail()) {
-				throw "Incorrect parameter, please input integer and check the number of the line parameters";
-			}
-			addLine(type, x1, y1, x2, y2);		
-		}
-	}
+	FreeConsole();
 }
 
-void inputArg(int argc, char** argv) {
-	char* inputFilePath = NULL;
-		bool flagI = false;
-		bool flagO = false;
-		for (int i = 0; i < argc; ++i) {
-			if (argv[i][0] == '-' && strcmp(argv[i], "-i") != 0 && strcmp(argv[i], "-o") != 0) {
-				throw "Incorrect command line parameters, please use '-i' for input, '-o' for output";
-			}
-			if (strcmp(argv[i], "-i") == 0) {
-				inputFilePath = argv[++i];
-				flagI = true;
-			}
-			if (strcmp(argv[i], "-o") == 0) {
-				fout.open(argv[++i]);
-				flagO = true;
-			}
-		}
-		if (flagI == false) {
-			throw "'-i' is not found, please use '-i'";
-		}
-		if (flagO == false) {
-			throw "'-o' is not found, please use '-o'";
-		}
-		inputFile(inputFilePath);
+void showCircle() {
+	FILE* fp = NULL;
+	AllocConsole();
+	freopen_s(&fp,"CONOUT$", "w", stdout);
+	for (unsigned int i = 0; i < circles.size(); ++i) {
+		cout << "Circle " << i << ": (" << circles[i].x << "," << circles[i].y << ") r=" << circles[i].r << endl;
+	}
+	FreeConsole();
 }
 
-void solve() {
+int solve() {
+	points.clear();
 	for (int i = 0; i < (int)lines.size(); ++i) {//直线与直线相交
 		for (int j = i + 1; j < (int)lines.size(); ++j) {
 			lineIntersectLine(*lines[i], *lines[j]);
@@ -222,34 +234,92 @@ void solve() {
 			circleIntersectCircle(circles[i], circles[j]);
 		}
 	}
-}
-
-int main(int argc, char** argv) {
-	try {
-		inputArg(argc, argv);
-		solve();
-	}
-	catch (const char* msg) {
-		cerr << msg << endl;
-	}
-	fout << points.size() << endl;
-	fin.close();
-	fout.close();
+	return (int)points.size();
 }
 
 void draw() {
-	for (unsigned int i = 0; i < lines.size(); i++) {
-
+	COLORREF color = RGB(245, 245, 245);
+	initgraph(Length, Height);
+	setbkcolor(color);
+	cleardevice();
+	//fillrectangle(0, 0, Length, Height);
+	//画坐标轴
+	setlinestyle(PS_SOLID, 3);
+	color = RGB(28, 28, 28);
+	setlinecolor(color);
+	//x轴
+	line(0, Yaxis, Length, Yaxis);
+	//y轴
+	line(Xaxis, 0, Xaxis, Height);
+	setlinestyle(PS_DASH, 1);
+	color = RGB(156, 156, 156);
+	setlinecolor(color);
+	for (unsigned int i = 0; i < Length / PerUnit; i++) {
+		line(i * PerUnit, 0, i * PerUnit, Height);
+		line(0, i * PerUnit, Length, i * PerUnit);
 	}
+	setlinestyle(PS_SOLID, 3);
+	color = RGB(99, 184, 255);
+	setlinecolor(color);
 	for (unsigned int i = 0; i < circles.size(); i++) {
-
+		Circle c = circles.at(i);
+		circle((int)c.x * PerUnit + Xaxis, Yaxis - (int)c.y * PerUnit, (int)c.r * PerUnit);
 	}
+	color = RGB(255, 64, 64);
+	setlinecolor(color);
+	for (unsigned int i = 0; i < lines.size(); i++) {
+		lines.at(i)->draw();
+	}
+
 }
 
 void drawPoint() {
+	setlinestyle(PS_SOLID, 3);
+	COLORREF color = RGB(46, 139, 87);
+	setfillcolor(color);
+	setlinecolor(color);
 	set<Point>::iterator iter = points.begin();
+	FILE* fp = NULL;
+	AllocConsole();
+	freopen_s(&fp, "CONOUT$", "w", stdout);
+	int i = 0;
 	while (iter != points.end()) {
-
+		i++;
+		int x = (int)(Xaxis + iter->x * PerUnit);
+		int y = (int)(Yaxis - iter->y * PerUnit);
+		cout << "Intersect Point " << i << ": (" << iter->x << ", " << iter->y << ")" << endl;
+		fillcircle(x, y, 3);
 		iter++;
 	}
+	FreeConsole();
+}
+
+void inputArg(int argc, char** argv) {
+	char* inputFilePath = NULL;
+	bool flagI = false;
+	bool flagO = false;
+	for (int i = 0; i < argc; ++i) {
+		if (argv[i][0] == '-' && strcmp(argv[i], "-i") != 0 && strcmp(argv[i], "-o") != 0) {
+			throw "Incorrect command line parameters, please use '-i' for input, '-o' for output";
+		}
+		if (strcmp(argv[i], "-i") == 0) {
+			inputFilePath = argv[++i];
+			flagI = true;
+		}
+		if (strcmp(argv[i], "-o") == 0) {
+			fout.open(argv[++i]);
+			flagO = true;
+		}
+	}
+	if (flagI == false) {
+		throw "'-i' is not found, please use '-i'";
+	}
+	if (flagO == false) {
+		throw "'-o' is not found, please use '-o'";
+	}
+	inputFile(inputFilePath);
+}
+
+void outputArg() {
+	fout << solve() << endl;
 }
