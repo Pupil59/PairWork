@@ -9,7 +9,6 @@
 
 using namespace std;
 ifstream fin;
-ofstream fout;
 vector<Line*> lines;
 vector<Circle> circles;
 set<Point> points;
@@ -292,34 +291,4 @@ void drawPoint() {
 		iter++;
 	}
 	FreeConsole();
-}
-
-void inputArg(int argc, char** argv) {
-	char* inputFilePath = NULL;
-	bool flagI = false;
-	bool flagO = false;
-	for (int i = 0; i < argc; ++i) {
-		if (argv[i][0] == '-' && strcmp(argv[i], "-i") != 0 && strcmp(argv[i], "-o") != 0) {
-			throw "Incorrect command line parameters, please use '-i' for input, '-o' for output";
-		}
-		if (strcmp(argv[i], "-i") == 0) {
-			inputFilePath = argv[++i];
-			flagI = true;
-		}
-		if (strcmp(argv[i], "-o") == 0) {
-			fout.open(argv[++i]);
-			flagO = true;
-		}
-	}
-	if (flagI == false) {
-		throw "'-i' is not found, please use '-i'";
-	}
-	if (flagO == false) {
-		throw "'-o' is not found, please use '-o'";
-	}
-	inputFile(inputFilePath);
-}
-
-void outputArg() {
-	fout << solve() << endl;
 }

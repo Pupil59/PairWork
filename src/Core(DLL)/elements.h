@@ -1,7 +1,4 @@
 #pragma once
-//#include"pch.h"
-#include<cmath>
-#include<iostream>
 using namespace std;
 const long long PerUnit = 40;
 const long long Length = 1200;
@@ -17,6 +14,15 @@ public:
 	Point(double x, double y);
 	bool operator<(const Point& p) const;
 };
+class Circle {
+public:
+	long long x;
+	long long y;
+	long long r;
+
+	Circle(long long x, long long y, long long r);
+};
+
 class Line {
 public://使用一般式表示直线，避免使用double出现精度损失。
 	long long a;
@@ -30,15 +36,6 @@ public://使用一般式表示直线，避免使用double出现精度损失。
 	virtual void draw();
 	virtual void show();
 };
-class Circle {
-public:
-	long long x;
-	long long y;
-	long long r;
-
-	Circle(long long x, long long y, long long r);
-};
-
 class SegmentLine : public Line {
 public:
 	long long startX;

@@ -26,6 +26,7 @@ Circle::Circle(long long x, long long y, long long r) {
 	this->y = y;
 	this->r = r;
 }
+
 long long gcd(long long m, long long n) {
 	long long mid;
 	while (n > 0) {

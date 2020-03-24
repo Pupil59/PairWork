@@ -12,5 +12,3 @@ extern "C" _declspec(dllimport) void draw();
 extern "C" _declspec(dllimport) void drawPoint();
 extern "C" _declspec(dllimport) void showLine();
 extern "C" _declspec(dllimport) void showCircle();
-extern "C" _declspec(dllimport) void inputArg(int argc, char** argv);
-extern "C" _declspec(dllimport) void outputArg();

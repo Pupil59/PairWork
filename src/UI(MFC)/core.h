@@ -1,5 +1,5 @@
 #pragma once
-#pragma comment (lib, "Core.lib")
+#pragma comment(lib, "Core.lib")
 #include <string>
 using namespace std;
 extern "C" _declspec(dllimport) void addLine(string type, long long x1, long long y1, long long x2, long long y2);
@@ -12,5 +12,3 @@ extern "C" _declspec(dllimport) void draw();
 extern "C" _declspec(dllimport) void drawPoint();
 extern "C" _declspec(dllimport) void showLine();
 extern "C" _declspec(dllimport) void showCircle();
-extern "C" _declspec(dllimport) void inputArg(int argc, char** argv);
-extern "C" _declspec(dllimport) void outputArg();
